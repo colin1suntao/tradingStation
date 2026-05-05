@@ -80,6 +80,36 @@ curl -X POST "http://localhost:8000/api/v1/datasources/sync-instruments?datasour
 | `/api/v1/datasources/sync` | POST | 同步K线数据 |
 | `/api/v1/datasources/sync-tasks` | GET | 查看同步任务 |
 
+### 策略研究 API
+
+| 端点 | 方法 | 说明 |
+|------|------|------|
+| `/api/v1/strategies` | GET | 列出所有策略 |
+| `/api/v1/strategies/{id}` | GET | 获取策略详情 |
+| `/api/v1/strategies` | POST | 创建策略 |
+| `/api/v1/strategies/{id}` | PUT | 更新策略 |
+| `/api/v1/strategies/{id}` | DELETE | 删除策略 |
+| `/api/v1/strategies/validate` | POST | 验证策略代码 |
+
+### 回测 API
+
+| 端点 | 方法 | 说明 |
+|------|------|------|
+| `/api/v1/backtests` | GET | 列出所有回测任务 |
+| `/api/v1/backtests/{id}` | GET | 获取回测任务详情 |
+| `/api/v1/backtests` | POST | 创建回测任务 |
+| `/api/v1/backtests/{id}/run` | POST | 运行回测 |
+| `/api/v1/backtests/{id}` | DELETE | 取消回测 |
+
+### 分析与可视化 API
+
+| 端点 | 方法 | 说明 |
+|------|------|------|
+| `/api/v1/analyze/{result_id}/metrics` | GET | 获取性能指标 |
+| `/api/v1/analyze/{result_id}/charts` | GET | 获取图表数据 |
+| `/api/v1/analyze/{result_id}/risk` | GET | 获取风险分析 |
+| `/api/v1/analyze/{result_id}/summary` | GET | 获取摘要 |
+
 ## 项目结构
 
 ```
@@ -116,8 +146,7 @@ tradingstation/
 ## 开发计划
 
 - [x] 统一数据与主数据系统
-- [ ] 策略研究环境 (JupyterLab 集成)
-- [ ] 回测引擎
+- [x] 策略研究环境 (策略管理 + 回测引擎 + 分析可视化)
 - [ ] 组合管理
 - [ ] 风险管理
 - [ ] 模拟交易
@@ -125,6 +154,80 @@ tradingstation/
 - [ ] 多 Agent 协作框架
 - [ ] 监控与复盘
 - [ ] 前端界面
+
+## 策略使用示例
+
+### 创建策略
+
+```python
+import requests
+from datetime import datetime
+
+# 策略代码
+strategy_code = """
+class Strategy:
+    name = "Moving Average Crossover"
+    params = {"short_window": 20, "long_window": 50}
+    
+    def __init__(self, params=None):
+        self.params = params or self.params
+    
+    def initialize(self, context):
+        self.context = context
+    
+    def on_bar(self, data):
+        # 简单示例逻辑
+        return {"signal": "hold"}
+"""
+
+# 创建策略
+response = requests.post("http://localhost:8000/api/v1/strategies", json={
+    "name": "MA Crossover",
+    "code": "ma_crossover",
+    "description": "双均线策略",
+    "code_content": strategy_code,
+    "parameters": {"short_window": 20, "long_window": 50},
+    "asset_class": "crypto"
+})
+
+print(response.json())
+```
+
+### 创建回测
+
+```python
+# 创建回测任务
+response = requests.post("http://localhost:8000/api/v1/backtests", json={
+    "name": "测试回测",
+    "strategy_id": 1,
+    "instrument_ids": [1],
+    "timeframe": "1d",
+    "start_time": "2024-01-01T00:00:00",
+    "end_time": "2024-12-31T23:59:59",
+    "parameters": {"short_window": 20, "long_window": 50}
+})
+
+task_id = response.json()["id"]
+print(f"回测任务创建: {task_id}")
+
+# 运行回测
+response = requests.post(f"http://localhost:8000/api/v1/backtests/{task_id}/run")
+print("回测结果:", response.json())
+```
+
+### 查看分析结果
+
+```python
+# 获取性能指标
+result_id = 1  # 从回测结果获取
+response = requests.get(f"http://localhost:8000/api/v1/analyze/{result_id}/metrics")
+metrics = response.json()
+
+print(f"总收益率: {metrics['total_return']:.2%}")
+print(f"夏普比率: {metrics['sharpe_ratio']:.2f}")
+print(f"最大回撤: {metrics['max_drawdown']:.2%}")
+print(f"胜率: {metrics['win_rate']:.2%}")
+```
 
 ## 贡献指南
 

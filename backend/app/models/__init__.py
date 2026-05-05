@@ -10,6 +10,13 @@ from .master import (
     SyncTask,
 )
 from .market import KlineOHLCV, TickData
+from .strategy import (
+    StrategyStatus,
+    BacktestStatus,
+    Strategy,
+    BacktestTask,
+    BacktestResult,
+)
 
 __all__ = [
     "AssetClass",
@@ -23,4 +30,9 @@ __all__ = [
     "SyncTask",
     "KlineOHLCV",
     "TickData",
+    "StrategyStatus",
+    "BacktestStatus",
+    "Strategy",
+    "BacktestTask",
+    "BacktestResult",
 ]

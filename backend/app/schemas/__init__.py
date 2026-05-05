@@ -12,6 +12,17 @@ from .master import (
 )
 from .market import Kline, KlineCreate, KlineQuery, Quote
 from .datasource import SyncRequest, SyncResponse
+from .strategy import (
+    Strategy,
+    StrategyCreate,
+    StrategyUpdate,
+    BacktestTask,
+    BacktestTaskCreate,
+    BacktestResult,
+    BacktestResultBase,
+    ValidationResult,
+    MetricResult,
+)
 
 __all__ = [
     "Exchange",
@@ -30,4 +41,13 @@ __all__ = [
     "Quote",
     "SyncRequest",
     "SyncResponse",
+    "Strategy",
+    "StrategyCreate",
+    "StrategyUpdate",
+    "BacktestTask",
+    "BacktestTaskCreate",
+    "BacktestResult",
+    "BacktestResultBase",
+    "ValidationResult",
+    "MetricResult",
 ]

@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from app.core.config import get_settings
-from app.api.v1 import data, master, datasource
+from app.api.v1 import data, master, datasource, strategy, backtest, analyze
 
 settings = get_settings()
 
@@ -9,6 +9,9 @@ app = FastAPI(title=settings.app_name, debug=settings.debug)
 app.include_router(data.router, prefix="/api/v1/data", tags=["data"])
 app.include_router(master.router, prefix="/api/v1/master", tags=["master"])
 app.include_router(datasource.router, prefix="/api/v1/datasources", tags=["datasources"])
+app.include_router(strategy.router, prefix="/api/v1", tags=["strategies"])
+app.include_router(backtest.router, prefix="/api/v1", tags=["backtests"])
+app.include_router(analyze.router, prefix="/api/v1", tags=["analyze"])
 
 @app.get("/")
 async def root():
