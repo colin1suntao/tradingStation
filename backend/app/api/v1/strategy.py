@@ -13,6 +13,12 @@ async def get_strategies(db: AsyncSession = Depends(get_db)):
     service = StrategyService(db)
     return await service.get_all_strategies()
 
+@router.post("/validate", response_model=ValidationResult)
+async def validate_strategy(code_content: str):
+    """验证策略代码"""
+    service = StrategyService(None)
+    return service.validate_strategy(code_content)
+
 @router.get("/{strategy_id}", response_model=Strategy)
 async def get_strategy(strategy_id: int, db: AsyncSession = Depends(get_db)):
     """获取策略"""
@@ -59,9 +65,3 @@ async def delete_strategy(strategy_id: int, db: AsyncSession = Depends(get_db)):
     if not success:
         raise HTTPException(status_code=404, detail="Strategy not found")
     return {"message": "Strategy deleted"}
-
-@router.post("/validate", response_model=ValidationResult)
-async def validate_strategy(code_content: str):
-    """验证策略代码"""
-    service = StrategyService(None)
-    return service.validate_strategy(code_content)

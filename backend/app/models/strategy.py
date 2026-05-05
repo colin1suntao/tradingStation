@@ -1,4 +1,5 @@
-from sqlalchemy import Column, Integer, String, Text, JSON, DateTime, Enum, ForeignKey
+from sqlalchemy import Column, Integer, String, Text, JSON, DateTime, ForeignKey
+from sqlalchemy.dialects.postgresql import ENUM
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from app.core.database import Base
@@ -27,7 +28,7 @@ class Strategy(Base):
     code_content = Column(Text, nullable=False)
     parameters = Column(JSON, nullable=False)
     asset_class = Column(String(20), nullable=False)
-    status = Column(Enum(StrategyStatus), default=StrategyStatus.DRAFT)
+    status = Column(ENUM(StrategyStatus, name="strategystatus"), default=StrategyStatus.DRAFT)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
     version = Column(Integer, default=1)
@@ -45,7 +46,7 @@ class BacktestTask(Base):
     start_time = Column(DateTime(timezone=True), nullable=False)
     end_time = Column(DateTime(timezone=True), nullable=False)
     parameters = Column(JSON)
-    status = Column(Enum(BacktestStatus), default=BacktestStatus.PENDING)
+    status = Column(ENUM(BacktestStatus, name="backteststatus"), default=BacktestStatus.PENDING)
     progress = Column(Integer, default=0)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     started_at = Column(DateTime(timezone=True))
