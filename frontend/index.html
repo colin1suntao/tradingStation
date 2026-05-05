@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TradingStation - 量化交易平台</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .card-hover { transition: all 0.3s ease; }
+        .card-hover:hover { transform: translateY(-5px); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div id="app">
+        <!-- 导航栏 -->
+        <nav class="gradient-bg text-white shadow-lg">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between h-16">
+                    <div class="flex items-center">
+                        <h1 class="text-2xl font-bold">📊 TradingStation</h1>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <a href="#" onclick="showSection('dashboard')" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-white/20" id="nav-dashboard">仪表盘</a>
+                        <a href="#" onclick="showSection('instruments')" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-white/20" id="nav-instruments">标的管理</a>
+                        <a href="#" onclick="showSection('datasources')" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-white/20" id="nav-datasources">数据源</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- 主要内容 -->
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <!-- 仪表盘部分 -->
+            <div id="section-dashboard" class="section">
+                <h2 class="text-3xl font-bold text-gray-800 mb-8">欢迎来到 TradingStation</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-white rounded-xl shadow-md p-6 card-hover">
+                        <h3 class="text-lg font-semibold text-gray-700 mb-2">📈 支持的资产</h3>
+                        <p class="text-3xl font-bold text-indigo-600">4 种类型</p>
+                        <p class="text-gray-500 text-sm mt-1">股票、期货、外汇、加密货币</p>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-md p-6 card-hover">
+                        <h3 class="text-lg font-semibold text-gray-700 mb-2">🔌 数据源</h3>
+                        <p class="text-3xl font-bold text-indigo-600">2 个已配置</p>
+                        <p class="text-gray-500 text-sm mt-1">Binance, Yahoo Finance</p>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-md p-6 card-hover">
+                        <h3 class="text-lg font-semibold text-gray-700 mb-2">⚡ 系统状态</h3>
+                        <p class="text-3xl font-bold text-green-600">健康运行中</p>
+                        <p class="text-gray-500 text-sm mt-1" id="backend-status">检查中...</p>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h3 class="text-xl font-semibold mb-4">最近活动</h3>
+                    <div class="space-y-4" id="activity-list">
+                        <div class="flex items-center p-4 bg-gray-50 rounded-lg">
+                            <span class="text-green-500 mr-3">✅</span>
+                            <div>
+                                <p class="font-medium">后端服务启动</p>
+                                <p class="text-gray-500 text-sm">API 正常运行</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 标的管理部分 -->
+            <div id="section-instruments" class="section hidden">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-3xl font-bold text-gray-800">标的管理</h2>
+                    <button onclick="refreshInstruments()" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">刷新数据</button>
+                </div>
+                <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <div class="flex space-x-4">
+                    <input type="text" placeholder="搜索标的..." class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" id="search-instruments">
+                    <select class="px-4 py-2 border border-gray-300 rounded-lg" id="filter-asset-class">
+                                <option value="">所有资产类型</option>
+                                <option value="crypto">加密货币</option>
+                                <option value="equity">股票</option>
+                                <option value="future">期货</option>
+                                <option value="option">期权</option>
+                                <option value="fx">外汇</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">标的代码</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">名称</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">交易所</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">资产类型</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">类型</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200" id="instruments-table-body">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 数据源部分 -->
+            <div id="section-datasources" class="section hidden">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-3xl font-bold text-gray-800">数据源管理</h2>
+                    <div class="space-x-4">
+                        <button onclick="syncInstruments('binance')" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">同步 Binance 标的</button>
+                        <button onclick="syncInstruments('yahoo')" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">同步 Yahoo 标的</button>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="bg-white rounded-xl shadow-md p-6">
+                        <h3 class="text-xl font-semibold mb-4 flex items-center">
+                            <span class="text-yellow-500 mr-2">📊</span> Binance
+                        </h3>
+                        <p class="text-gray-600 mb-4">加密货币数据源，支持现货、期货、永续合约</p>
+                        <div class="space-y-2">
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                                状态: 已连接
+                            </span>
+                            <p class="text-sm text-gray-500">支持: BTC, ETH, SOL 等主流币种</p>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-md p-6">
+                        <h3 class="text-xl font-semibold mb-4 flex items-center">
+                            <span class="text-blue-500 mr-2">📈</span> Yahoo Finance
+                        </h3>
+                        <p class="text-gray-600 mb-4">美股、ETF 数据源，支持历史数据和实时行情</p>
+                        <div class="space-y-2">
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                                状态: 已连接
+                            </span>
+                            <p class="text-sm text-gray-500">支持: AAPL, MSFT, GOOGL 等美股</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h3 class="text-xl font-semibold mb-4">同步任务</h3>
+                    <div id="sync-status" class="text-gray-500">暂无同步任务</div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="bg-gray-800 text-white py-8 mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div>
+                    <p class="font-bold text-lg">TradingStation</p>
+                    <p class="text-gray-400 text-sm">面向个人量化团队的全球多资产量化交易平台</p>
+                </div>
+                <div class="mt-4 md:mt-0">
+                    <p class="text-gray-400 text-sm">© 2026 TradingStation. All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
