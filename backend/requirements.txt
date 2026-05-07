@@ -21,4 +21,7 @@ vectorbt>=0.26.0
 plotly==5.20.0
 langchain>=0.1.0
 langchain-openai>=0.1.0
+langchain-anthropic>=0.1.0
+langchain-google-genai>=0.1.0
+langchain-community>=0.1.0
 langgraph>=0.1.0
