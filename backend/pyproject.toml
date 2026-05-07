@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "trading_agents"
+version = "0.1.0"
+description = "Multi-Agent LLM Financial Trading Framework"
+requires-python = ">=3.10"
+dependencies = [
+    "langchain>=0.1.0",
+    "langchain-openai>=0.1.0",
+    "langgraph>=0.1.0",
+    "yfinance>=0.2.0",
+    "pandas>=2.0.0",
+    "numpy>=1.24.0",
+]
+
+[project.scripts]
+tradingagents = "trading_agents.cli.main:main"
+
+[tool.setuptools.packages.find]
+where = ["app"]
+include = ["trading_agents*"]
