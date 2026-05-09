@@ -1,4 +1,4 @@
-from app.api.v1 import data, master, datasource, strategy, backtest, analyze, llm, multi_agent, risk, trading
+from app.api.v1 import data, master, datasource, strategy, backtest, analyze, llm, multi_agent, risk, trading, execution, portfolio_backtest
 
 __all__ = [
     "data",
@@ -11,4 +11,6 @@ __all__ = [
     "multi_agent",
     "risk",
     "trading",
+    "execution",
+    "portfolio_backtest",
 ]

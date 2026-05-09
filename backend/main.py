@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from app.core.config import get_settings
-from app.api.v1 import data, master, datasource, strategy, backtest, analyze, llm, multi_agent, risk, trading, execution
+from app.api.v1 import data, master, datasource, strategy, backtest, analyze, llm, multi_agent, risk, trading, execution, portfolio_backtest
 
 settings = get_settings()
 
@@ -17,6 +17,7 @@ app.include_router(multi_agent.router, prefix="/api/v1/multi-agent", tags=["Mult
 app.include_router(risk.router, prefix="/api/v1/risk", tags=["Risk Management"])
 app.include_router(trading.router, prefix="/api/v1/trading", tags=["Trading"])
 app.include_router(execution.router, prefix="/api/v1/execution", tags=["Agent Execution"])
+app.include_router(portfolio_backtest.router, prefix="/api/v1/portfolio", tags=["Portfolio Backtest"])
 
 @app.get("/")
 async def root():
